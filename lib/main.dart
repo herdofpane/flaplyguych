@@ -32,11 +32,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double _imageYPosition = 0.0;
+  double _imageYPosition = 5.0;
+  double _imageYPosition2 = 50;
+  double _imageXPosition2 = 50;
   late Timer _timer;
-  final double _gravity = 5.0;
-  final double _jumpStrength = -50.0;
-  final int _refreshRate = 50; // Millisecondes pour la fréquence de rafraîchissement
+  final double _gravity = -5.0; // Gravité négative pour aller vers le haut
+  final double _jumpStrength = 50.0; // Force de saut positive
+  final int _refreshRate = 50;
 
   @override
   void initState() {
@@ -46,6 +48,9 @@ class _MyHomePageState extends State<MyHomePage> {
         _imageYPosition += _gravity;
         if (_imageYPosition > MediaQuery.of(context).size.height) {
           _imageYPosition = MediaQuery.of(context).size.height;
+        }
+        if (_imageYPosition == 0) {
+          _imageYPosition = 5;
         }
       });
     });
@@ -58,7 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onKey(RawKeyEvent event) {
-    if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+    if (event is RawKeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.space) {
       _jump();
     }
   }
@@ -66,8 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _jump() {
     setState(() {
       _imageYPosition += _jumpStrength;
-      if (_imageYPosition < 0) {
-        _imageYPosition = 0;
+      if (_imageYPosition == 0) {
+        _imageYPosition = 50;
       }
     });
   }
@@ -88,8 +94,15 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Positioned(
               bottom: _imageYPosition,
-              child: Image.asset('image/carlito.jpg'), // Remplacez par votre image
+              child:
+                  Image.asset('image/carlito.jpg'), // Remplacez par votre image
             ),
+            Positioned(
+              bottom: _imageYPosition2,
+              left: _imageXPosition2,
+              child: Image.asset('image/your_second_image.jpg'),
+            ),
+
             // Autres widgets si nécessaire
           ],
         ),
