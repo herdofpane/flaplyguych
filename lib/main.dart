@@ -1,5 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Importation nécessaire pour les fonctionnalités du clavier
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,27 +32,50 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  final FocusNode _focusNode = FocusNode(); // Création d'un FocusNode
+  double _imageYPosition = 5.0;
+  double _imageYPosition2 = 50;
+  double _imageXPosition2 = 50;
+  late Timer _timer;
+  final double _gravity = -5.0; // Gravité négative pour aller vers le haut
+  final double _jumpStrength = 50.0; // Force de saut positive
+  final int _refreshRate = 50;
 
   @override
-  void dispose() {
-    _focusNode.dispose(); // N'oubliez pas de disposer le FocusNode
-    super.dispose();
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(Duration(milliseconds: _refreshRate), (timer) {
+      setState(() {
+        _imageYPosition += _gravity;
+        if (_imageYPosition > MediaQuery.of(context).size.height) {
+          _imageYPosition = MediaQuery.of(context).size.height;
+        }
+        if (_imageYPosition == 0) {
+          _imageYPosition = 5;
+        }
+      });
     });
   }
 
-  void _onKeyPressed(RawKeyEvent event) {
-    if (event is RawKeyDownEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.space) {
-        _incrementCounter();
-      }
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void _onKey(RawKeyEvent event) {
+    if (event is RawKeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.space) {
+      _jump();
     }
+  }
+
+  void _jump() {
+    setState(() {
+      _imageYPosition += _jumpStrength;
+      if (_imageYPosition == 0) {
+        _imageYPosition = 50;
+      }
+    });
   }
 
   @override
@@ -62,28 +86,26 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: RawKeyboardListener(
-        focusNode: _focusNode,
-        onKey: _onKeyPressed,
-        autofocus: true, // Assurez-vous que le widget a le focus
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'You have pushed the button this many times:',
-              ),
-              Text(
-                '$_counter',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ],
-          ),
+        focusNode: FocusNode(),
+        onKey: _onKey,
+        autofocus: true,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            Positioned(
+              bottom: _imageYPosition,
+              child:
+                  Image.asset('image/carlito.jpg'), // Remplacez par votre image
+            ),
+            Positioned(
+              bottom: _imageYPosition2,
+              left: _imageXPosition2,
+              child: Image.asset('image/your_second_image.jpg'),
+            ),
+
+            // Autres widgets si nécessaire
+          ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add), // J'ai remis l'icône par défaut ici
       ),
     );
   }
