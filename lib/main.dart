@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (int i = 0; i < nbrDeTuyaux; i++) {
       tuyauxInverse.add(
         Tuyau(
-          bottom: tuyaux[i].bottom + _hauteurImageTuyo + 500,
+          bottom: tuyaux[i].bottom + _hauteurImageTuyo + 300,
           left: tuyaux[i].left,
           hauteur: 280,
           longueur: 57,
