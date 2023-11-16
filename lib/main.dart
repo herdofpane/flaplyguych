@@ -67,7 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
   double _leftTuyo3 = 0;
   double _bottomTuyoInverse3 = 0;
 
-  int condition = 255;
   late Timer _timer;
   final double _gravity = -5.0;
   final double _gravity2 = -10.0; // Gravité négative pour aller vers le haut
