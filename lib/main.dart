@@ -121,9 +121,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   Image.asset('image/carlito.jpg'), // Remplacez par votre image
             ),
             Positioned(
-              bottom: _imageYPosition2,
+              bottom: _imageYPosition2 - 615,
               left: _imageXPosition2,
-              child: Image.asset('image/your_second_image.jpg'),
+              child: Image.asset('image/tuyo.png'),
             ),
 
             // Autres widgets si nécessaire
