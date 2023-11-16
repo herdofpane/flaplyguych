@@ -104,8 +104,10 @@ class _MyHomePageState extends State<MyHomePage> {
         if (_bottomFlappy == 0) {
           resetGame();
         }
-        if (_bottomFlappy > MediaQuery.of(context).size.height) {
-          _bottomFlappy = MediaQuery.of(context).size.height;
+
+        if (_bottomFlappy + _hauteurFlappy >
+            MediaQuery.of(context).size.height) {
+          _bottomFlappy = MediaQuery.of(context).size.height - _hauteurFlappy;
         }
 // gestion evenement 1er tuyaux
         // quand on touche le tuyaux
@@ -198,10 +200,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      //   title: Text(widget.title),
+      // ),
       body: RawKeyboardListener(
         focusNode: FocusNode(),
         onKey: _onKey,
