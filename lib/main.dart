@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int condition = 255;
   late Timer _timer;
   final double _gravity = -5.0;
-  final double _gravity2 = -5.0; // Gravité négative pour aller vers le haut
+  final double _gravity2 = -10.0; // Gravité négative pour aller vers le haut
   final double _jumpStrength = 50.0; // Force de saut positive
   final int _refreshRate = 50;
 
@@ -71,11 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
         }
         if (_leftTuyo == 0) {
           _leftTuyo = 1000;
-          double nbr = 0;
-          // while (nbr < 250) {
-          nbr = random.nextDouble() * 100;
-          // }
-          _bottomTuyo = -nbr;
+          double nbr = -1000;
+          // print(-nbr);
+
+          while (nbr < -457 || nbr > -200) {
+            nbr = -random.nextDouble() * 1000;
+          }
+          print(nbr);
+          _bottomTuyo = nbr;
         }
       });
     });
