@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double _leftFlappy = 250;
 
   double _hauteurImageTuyo = 615;
-  double _bottomTuyo = -615;
+  double _bottomTuyo = -315;
   double _leftTuyo = 1000;
 
   int condition = 255;
@@ -61,9 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
           _bottomFlappy = MediaQuery.of(context).size.height;
         }
         if (_bottomFlappy == 0 ||
-            _bottomFlappy < _bottomTuyo &&
-                _leftTuyo < condition &&
-                _leftTuyo > 240) {
+            _bottomFlappy < _bottomTuyo + _hauteurImageTuyo &&
+                _leftTuyo < condition + 447 &&
+                _leftTuyo > condition + 425) {
           _bottomFlappy = 5;
           _leftTuyo = 1000;
         }
