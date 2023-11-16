@@ -48,7 +48,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Random random = Random();
+  int point = 0;
   double _pointDeSpawn = 0;
+  bool executed = false;
 
   double _distanceDepartTuyaux = 700;
   int nbrDeTuyaux = 3;
@@ -67,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late Timer _timer;
   final double _gravityFlappy = -8.0;
   final double _gravityTuyau = -10.0;
-  final double _jumpStrength = 65.0;
+  final double _jumpStrength = 60.0;
   final int _refreshRate = 50;
 
   @override
@@ -134,6 +136,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (tuyau.left < -tuyau.longueur) {
         tuyau.left = _distanceDepartTuyaux * nbrDeTuyaux;
+        executed = false;
+      }
+      if (!executed) {
+        if (tuyau.left < _leftFlappy - tuyau.longueur) {
+          point++;
+          executed = true;
+        }
       }
     }
   }
@@ -159,6 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void resetGame() {
     _bottomFlappy = _gravityFlappy.abs();
+    point = 0;
 
     for (int i = 0; i < tuyaux.length; i++) {
       tuyaux[i].bottom = departHauteurTuyaux();
@@ -201,6 +211,14 @@ class _MyHomePageState extends State<MyHomePage> {
               bottom: _bottomFlappy,
               left: _leftFlappy,
               child: Image.asset('image/flappy2.png'),
+            ),
+            Positioned(
+              top: 50, // ajustez ces valeurs en fonction de vos besoins
+              left: 20,
+              child: Text(
+                point.toString(),
+                style: TextStyle(fontSize: 20),
+              ),
             ),
             for (Tuyau tuyau in tuyaux)
               Positioned(
