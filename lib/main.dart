@@ -101,34 +101,13 @@ class _MyHomePageState extends State<MyHomePage> {
         // Mise à jour des positions
         _bottomFlappy += _gravity;
         //tuyaux a l'endroit
-        for (Tuyau tuyau in tuyaux) {
-          tuyau.left += _gravity2;
-          if (_bottomFlappy < tuyau.bottom + tuyau.hauteur &&
-              tuyau.left < _leftFlappy + _longueurFlappy &&
-              tuyau.left > _leftFlappy - tuyau.longueur) {
-            resetGame();
-          }
-
-          if (tuyau.left < -tuyau.longueur) {
-            tuyau.left = _distanceDepartTuyaux * nbrDeTuyaux;
-          }
-        }
+        verifTuyauDroit();
 
         if (_bottomFlappy == 0) {
           resetGame();
         }
         //tuyaux a l'envers
-        for (Tuyau tuyau in tuyauxInverse) {
-          tuyau.left += _gravity2;
-          if (_bottomFlappy + _hauteurFlappy > tuyau.bottom &&
-              tuyau.left < _leftFlappy + _longueurFlappy &&
-              tuyau.left > _leftFlappy - tuyau.longueur) {
-            resetGame();
-          }
-          if (tuyau.left < -tuyau.longueur) {
-            tuyau.left = _distanceDepartTuyaux * nbrDeTuyaux;
-          }
-        }
+        verifTuyauInvers();
 
         // Vérification des collisions et remise à zéro si nécessaire
         // checkCollisions();
@@ -143,6 +122,35 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     _timer.cancel();
     super.dispose();
+  }
+
+  void verifTuyauDroit() {
+    for (Tuyau tuyau in tuyaux) {
+      tuyau.left += _gravity2;
+      if (_bottomFlappy < tuyau.bottom + tuyau.hauteur &&
+          tuyau.left < _leftFlappy + _longueurFlappy &&
+          tuyau.left > _leftFlappy - tuyau.longueur) {
+        resetGame();
+      }
+
+      if (tuyau.left < -tuyau.longueur) {
+        tuyau.left = _distanceDepartTuyaux * nbrDeTuyaux;
+      }
+    }
+  }
+
+  void verifTuyauInvers() {
+    for (Tuyau tuyau in tuyauxInverse) {
+      tuyau.left += _gravity2;
+      if (_bottomFlappy + _hauteurFlappy > tuyau.bottom &&
+          tuyau.left < _leftFlappy + _longueurFlappy &&
+          tuyau.left > _leftFlappy - tuyau.longueur) {
+        resetGame();
+      }
+      if (tuyau.left < -tuyau.longueur) {
+        tuyau.left = _distanceDepartTuyaux * nbrDeTuyaux;
+      }
+    }
   }
 
   double departHauteurTuyaux() {
