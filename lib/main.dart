@@ -36,11 +36,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Random random = Random();
 
-  double _imageYPosition = 5.0;
-  double _imageXPosition = 250;
+  double _bottomFlappy = 5.0;
+  double _leftFlappy = 250;
 
-  double _imageYPosition2 = 200;
-  double _imageXPosition2 = 1000;
+  double _hauteurImageTuyo = 615;
+  double _bottomTuyo = -615;
+  double _leftTuyo = 1000;
 
   int condition = 255;
   late Timer _timer;
@@ -54,25 +55,25 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _timer = Timer.periodic(Duration(milliseconds: _refreshRate), (timer) {
       setState(() {
-        _imageYPosition += _gravity;
-        _imageXPosition2 += _gravity2;
-        if (_imageYPosition > MediaQuery.of(context).size.height) {
-          _imageYPosition = MediaQuery.of(context).size.height;
+        _bottomFlappy += _gravity;
+        _leftTuyo += _gravity2;
+        if (_bottomFlappy > MediaQuery.of(context).size.height) {
+          _bottomFlappy = MediaQuery.of(context).size.height;
         }
-        if (_imageYPosition == 0 ||
-            _imageYPosition < _imageYPosition2 &&
-                _imageXPosition2 < condition &&
-                _imageXPosition2 > 240) {
-          _imageYPosition = 5;
-          _imageXPosition2 = 1000;
+        if (_bottomFlappy == 0 ||
+            _bottomFlappy < _bottomTuyo &&
+                _leftTuyo < condition &&
+                _leftTuyo > 240) {
+          _bottomFlappy = 5;
+          _leftTuyo = 1000;
         }
-        if (_imageXPosition2 == 0) {
-          _imageXPosition2 = 1000;
+        if (_leftTuyo == 0) {
+          _leftTuyo = 1000;
           double nbr = 0;
           // while (nbr < 250) {
           nbr = random.nextDouble() * 400;
           // }
-          _imageYPosition2 = nbr;
+          _bottomTuyo = nbr;
         }
       });
     });
@@ -93,9 +94,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _jump() {
     setState(() {
-      _imageYPosition += _jumpStrength;
-      if (_imageYPosition == 0) {
-        _imageYPosition = 50;
+      _bottomFlappy += _jumpStrength;
+      if (_bottomFlappy == 0) {
+        _bottomFlappy = 50;
       }
     });
   }
@@ -115,14 +116,14 @@ class _MyHomePageState extends State<MyHomePage> {
           alignment: Alignment.bottomCenter,
           children: <Widget>[
             Positioned(
-              bottom: _imageYPosition,
-              left: _imageXPosition,
+              bottom: _bottomFlappy,
+              left: _leftFlappy,
               child:
-                  Image.asset('image/carlito.jpg'), // Remplacez par votre image
+                  Image.asset('image/flappy.png'), // Remplacez par votre image
             ),
             Positioned(
-              bottom: _imageYPosition2 - 615,
-              left: _imageXPosition2,
+              bottom: _bottomTuyo,
+              left: _leftTuyo,
               child: Image.asset('image/tuyo.png'),
             ),
 
