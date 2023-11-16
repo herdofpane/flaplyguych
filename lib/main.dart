@@ -65,9 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Tuyau> tuyauxInverse = [];
 
   late Timer _timer;
-  final double _gravity = -5.0;
-  final double _gravity2 = -10.0;
-  final double _jumpStrength = 50.0;
+  final double _gravityFlappy = -8.0;
+  final double _gravityTuyau = -10.0;
+  final double _jumpStrength = 65.0;
   final int _refreshRate = 50;
 
   @override
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (int i = 0; i < nbrDeTuyaux; i++) {
       tuyauxInverse.add(
         Tuyau(
-          bottom: tuyaux[i].bottom + _hauteurImageTuyo + 300,
+          bottom: tuyaux[i].bottom + _hauteurImageTuyo + _hauteurFlappy + 100,
           left: tuyaux[i].left,
           hauteur: 280,
           longueur: 57,
@@ -99,21 +99,11 @@ class _MyHomePageState extends State<MyHomePage> {
     _timer = Timer.periodic(Duration(milliseconds: _refreshRate), (timer) {
       setState(() {
         // Mise à jour des positions
-        _bottomFlappy += _gravity;
-        //tuyaux a l'endroit
+        _bottomFlappy += _gravityFlappy;
         verifTuyauDroit();
-
-        if (_bottomFlappy == 0) {
-          resetGame();
-        }
-        //tuyaux a l'envers
         verifTuyauInvers();
 
-        // Vérification des collisions et remise à zéro si nécessaire
-        // checkCollisions();
-
-        // Réinitialisation des tuyaux sortis de l'écran
-        // resetTuyaux();
+        verifFlappy();
       });
     });
   }
@@ -124,9 +114,18 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  void verifFlappy() {
+    if (_bottomFlappy < 1) {
+      resetGame();
+    }
+    if (_bottomFlappy + _hauteurFlappy > MediaQuery.of(context).size.height) {
+      _bottomFlappy = MediaQuery.of(context).size.height - _hauteurFlappy;
+    }
+  }
+
   void verifTuyauDroit() {
     for (Tuyau tuyau in tuyaux) {
-      tuyau.left += _gravity2;
+      tuyau.left += _gravityTuyau;
       if (_bottomFlappy < tuyau.bottom + tuyau.hauteur &&
           tuyau.left < _leftFlappy + _longueurFlappy &&
           tuyau.left > _leftFlappy - tuyau.longueur) {
@@ -141,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void verifTuyauInvers() {
     for (Tuyau tuyau in tuyauxInverse) {
-      tuyau.left += _gravity2;
+      tuyau.left += _gravityTuyau;
       if (_bottomFlappy + _hauteurFlappy > tuyau.bottom &&
           tuyau.left < _leftFlappy + _longueurFlappy &&
           tuyau.left > _leftFlappy - tuyau.longueur) {
@@ -154,36 +153,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   double departHauteurTuyaux() {
-    double nbr = random.nextDouble() * (270 - 50) - 270;
+    double nbr = random.nextDouble() * (550) - 270;
     return nbr;
   }
 
   void resetGame() {
-    _bottomFlappy = 5;
+    _bottomFlappy = _gravityFlappy.abs();
 
     for (int i = 0; i < tuyaux.length; i++) {
       tuyaux[i].bottom = departHauteurTuyaux();
       tuyaux[i].left = _distanceDepartTuyaux * (i + 2);
     }
     for (int i = 0; i < tuyauxInverse.length; i++) {
-      tuyauxInverse[i].bottom = tuyaux[i].bottom + _hauteurImageTuyo + 300;
+      tuyauxInverse[i].bottom =
+          tuyaux[i].bottom + _hauteurImageTuyo + _hauteurFlappy + 100;
       tuyauxInverse[i].left = tuyaux[i].left;
     }
   }
-
-  // void checkCollisions() {
-  //   // ... Vérifications de collisions avec les tuyaux
-  //   // Ajoutez votre logique de collision ici et appelez resetGame() si nécessaire
-  // }
-
-  // void resetTuyaux() {
-  //   for (int i = 0; i < tuyaux.length; i++) {
-  //     if (tuyaux[i].left < -_longueurFlappy) {
-  //       tuyaux[i].left = _pointDeSpawn;
-  //       tuyaux[i].bottom = departHauteurTuyaux();
-  //     }
-  //   }
-  // }
 
   void _onKey(RawKeyEvent event) {
     if (event is RawKeyDownEvent &&
