@@ -4,12 +4,25 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+class Tuyau {
+  double bottom;
+  double left;
+  double hauteur;
+  double longueur;
+
+  Tuyau(
+      {required this.bottom,
+      required this.left,
+      required this.hauteur,
+      required this.longueur});
+}
+
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +38,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -35,127 +48,90 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Random random = Random();
-  double _poitnDeSpawn = 0;
+  double _pointDeSpawn = 0;
 
-  double _distanceDepartTuyaux = 1300;
-  double _distanceDepartTuyaux2 = 2700;
-  double _distanceDepartTuyaux3 = 4000;
+  double _distanceDepartTuyaux = 700;
+  int nbrDeTuyaux = 3;
 
-  // flappy
   double _bottomFlappy = 5.0;
   double _leftFlappy = 250;
   double _longueurFlappy = 171;
   double _hauteurFlappy = 104;
 
-  double _hauteurImageTuyo = 280;
-  double _longueurTuto = 57;
-
-  // tuyaux 1
-  double _bottomTuyo = 0;
-  double _leftTuyo = 0;
-  double _bottomTuyoInverse = 0;
-
-  //tuyaux 2
-
-  double _bottomTuyo2 = 0;
-  double _leftTuyo2 = 0;
-  double _bottomTuyoInverse2 = 0;
-
-  //tuyaux 3
-
-  double _bottomTuyo3 = 0;
-  double _leftTuyo3 = 0;
-  double _bottomTuyoInverse3 = 0;
+  List<Tuyau> tuyaux = [];
+  List<Tuyau> tuyauxInverse = [];
 
   late Timer _timer;
   final double _gravity = -5.0;
-  final double _gravity2 = -10.0; // Gravité négative pour aller vers le haut
-  final double _jumpStrength = 50.0; // Force de saut positive
+  final double _gravity2 = -10.0;
+  final double _jumpStrength = 50.0;
   final int _refreshRate = 50;
 
   @override
   void initState() {
     super.initState();
-    _leftTuyo = _distanceDepartTuyaux;
-    _bottomTuyo = departHauteurTuyaux();
-    // _bottomTuyoInverse = _bottomTuyo + _hauteurImageTuyo + 300;
 
-    _leftTuyo2 = _distanceDepartTuyaux2;
-    _bottomTuyo2 = departHauteurTuyaux();
-    // _bottomTuyoInverse2 = _bottomTuyo2 + _hauteurImageTuyo + 300;
+    for (int i = 0; i < nbrDeTuyaux; i++) {
+      tuyaux.add(
+        Tuyau(
+          bottom: departHauteurTuyaux(),
+          left: _distanceDepartTuyaux * (i + 2),
+          hauteur: 280,
+          longueur: 57,
+        ),
+      );
+    }
 
-    _leftTuyo3 = _distanceDepartTuyaux3;
-    _bottomTuyo3 = departHauteurTuyaux();
-    // _bottomTuyoInverse3 = _bottomTuyo3 + _hauteurImageTuyo + 300;
-
-    _poitnDeSpawn = _distanceDepartTuyaux3 - 200;
+    for (int i = 0; i < nbrDeTuyaux; i++) {
+      tuyauxInverse.add(
+        Tuyau(
+          bottom: tuyaux[i].bottom + _hauteurFlappy + 500,
+          left: tuyaux[i].left,
+          hauteur: 280,
+          longueur: 57,
+        ),
+      );
+    }
 
     _timer = Timer.periodic(Duration(milliseconds: _refreshRate), (timer) {
       setState(() {
-        _bottomTuyoInverse = _bottomTuyo + _hauteurImageTuyo + 300;
-        _bottomTuyoInverse2 = _bottomTuyo2 + _hauteurImageTuyo + 300;
-        _bottomTuyoInverse3 = _bottomTuyo3 + _hauteurImageTuyo + 300;
-
+        // Mise à jour des positions
         _bottomFlappy += _gravity;
-        _leftTuyo += _gravity2;
-        _leftTuyo2 += _gravity2;
-        _leftTuyo3 += _gravity2;
+        //tuyaux a l'endroit
+        for (Tuyau tuyau in tuyaux) {
+          tuyau.left += _gravity2;
+          if (_bottomFlappy < tuyau.bottom + tuyau.hauteur &&
+              tuyau.left < _leftFlappy + _longueurFlappy &&
+              tuyau.left > _leftFlappy - tuyau.longueur) {
+            resetGame();
+          }
+
+          if (tuyau.left < -tuyau.longueur) {
+            tuyau.left = _distanceDepartTuyaux * nbrDeTuyaux;
+          }
+        }
 
         if (_bottomFlappy == 0) {
           resetGame();
         }
-
-        if (_bottomFlappy + _hauteurFlappy >
-            MediaQuery.of(context).size.height) {
-          _bottomFlappy = MediaQuery.of(context).size.height - _hauteurFlappy;
-        }
-// gestion evenement 1er tuyaux
-        // quand on touche le tuyaux
-        if ((_bottomFlappy < _bottomTuyo + _hauteurImageTuyo &&
-                _leftTuyo < _leftFlappy + _longueurFlappy &&
-                _leftTuyo > _leftFlappy - _longueurTuto) ||
-            (_bottomFlappy + _hauteurFlappy > _bottomTuyoInverse &&
-                _leftTuyo < _leftFlappy + _longueurFlappy &&
-                _leftTuyo > _leftFlappy - _longueurTuto)) {
-          resetGame();
+        //tuyaux a l'envers
+        for (Tuyau tuyau in tuyauxInverse) {
+          tuyau.left += _gravity2;
+          if (_bottomFlappy + _hauteurFlappy > tuyau.bottom &&
+              tuyau.left < _leftFlappy + _longueurFlappy &&
+              tuyau.left > _leftFlappy - tuyau.longueur) {
+            resetGame();
+          }
+          if (tuyau.left < -tuyau.longueur) {
+            tuyau.left = _distanceDepartTuyaux * nbrDeTuyaux;
+          }
         }
 
-        // quand le tuyaux touche la fin de la page
-        if (_leftTuyo < -_longueurTuto) {
-          _leftTuyo = _poitnDeSpawn;
-          _bottomTuyo = departHauteurTuyaux();
-        }
+        // Vérification des collisions et remise à zéro si nécessaire
+        // checkCollisions();
 
-// gestion 2eme tuyaux
-        // quand on touche le tuyaux
-        if ((_bottomFlappy < _bottomTuyo2 + _hauteurImageTuyo &&
-                _leftTuyo2 < _leftFlappy + _longueurFlappy &&
-                _leftTuyo2 > _leftFlappy - _longueurTuto) ||
-            (_bottomFlappy + _hauteurFlappy > _bottomTuyoInverse2 &&
-                _leftTuyo2 < _leftFlappy + _longueurFlappy &&
-                _leftTuyo2 > _leftFlappy - _longueurTuto)) {
-          resetGame();
-        }
-        // quand le tuyaux touche la fin de la page
-        if (_leftTuyo2 < -_longueurTuto) {
-          _leftTuyo2 = _poitnDeSpawn;
-          _bottomTuyo2 = departHauteurTuyaux();
-        }
-// gestion 3eme tuyaux
-        // quand on touche le tuyaux
-        if ((_bottomFlappy < _bottomTuyo3 + _hauteurImageTuyo &&
-                _leftTuyo3 < _leftFlappy + _longueurFlappy &&
-                _leftTuyo3 > _leftFlappy - _longueurTuto) ||
-            (_bottomFlappy + _hauteurFlappy > _bottomTuyoInverse3 &&
-                _leftTuyo3 < _leftFlappy + _longueurFlappy &&
-                _leftTuyo3 > _leftFlappy - _longueurTuto)) {
-          resetGame();
-        }
-        // quand le tuyaux touche la fin de la page
-        if (_leftTuyo3 < -_longueurTuto) {
-          _leftTuyo3 = _poitnDeSpawn;
-          _bottomTuyo3 = departHauteurTuyaux();
-        }
+        // Réinitialisation des tuyaux sortis de l'écran
+        // resetTuyaux();
       });
     });
   }
@@ -167,19 +143,36 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   double departHauteurTuyaux() {
-    double nbr = -1000;
-    // while (nbr < -457 || nbr > -200) {
-    nbr = random.nextDouble() * (270 - 50) - 270;
-    // }
+    double nbr = random.nextDouble() * (270 - 50) - 270;
     return nbr;
   }
 
   void resetGame() {
     _bottomFlappy = 5;
-    _leftTuyo = _distanceDepartTuyaux;
-    _leftTuyo2 = _distanceDepartTuyaux2;
-    _leftTuyo3 = _distanceDepartTuyaux3;
+
+    for (int i = 0; i < tuyaux.length; i++) {
+      tuyaux[i].bottom = departHauteurTuyaux();
+      tuyaux[i].left = _distanceDepartTuyaux * (i + 2);
+    }
+    for (int i = 0; i < tuyauxInverse.length; i++) {
+      tuyauxInverse[i].bottom = tuyaux[i].bottom + _hauteurFlappy + 500;
+      tuyauxInverse[i].left = tuyaux[i].left;
+    }
   }
+
+  // void checkCollisions() {
+  //   // ... Vérifications de collisions avec les tuyaux
+  //   // Ajoutez votre logique de collision ici et appelez resetGame() si nécessaire
+  // }
+
+  // void resetTuyaux() {
+  //   for (int i = 0; i < tuyaux.length; i++) {
+  //     if (tuyaux[i].left < -_longueurFlappy) {
+  //       tuyaux[i].left = _pointDeSpawn;
+  //       tuyaux[i].bottom = departHauteurTuyaux();
+  //     }
+  //   }
+  // }
 
   void _onKey(RawKeyEvent event) {
     if (event is RawKeyDownEvent &&
@@ -200,10 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      //   title: Text(widget.title),
-      // ),
       body: RawKeyboardListener(
         focusNode: FocusNode(),
         onKey: _onKey,
@@ -214,41 +203,20 @@ class _MyHomePageState extends State<MyHomePage> {
             Positioned(
               bottom: _bottomFlappy,
               left: _leftFlappy,
-              child:
-                  Image.asset('image/flappy2.png'), // Remplacez par votre image
+              child: Image.asset('image/flappy2.png'),
             ),
-            Positioned(
-              bottom: _bottomTuyo,
-              left: _leftTuyo,
-              child: Image.asset('image/Tuyau22.png'),
-            ),
-            Positioned(
-              bottom: _bottomTuyoInverse,
-              left: _leftTuyo,
-              child: Image.asset('image/tuyau22ALenvers.png'),
-            ),
-            Positioned(
-              bottom: _bottomTuyo2,
-              left: _leftTuyo2,
-              child: Image.asset('image/Tuyau22.png'),
-            ),
-            Positioned(
-              bottom: _bottomTuyoInverse2,
-              left: _leftTuyo2,
-              child: Image.asset('image/tuyau22ALenvers.png'),
-            ),
-            Positioned(
-              bottom: _bottomTuyo3,
-              left: _leftTuyo3,
-              child: Image.asset('image/Tuyau22.png'),
-            ),
-            Positioned(
-              bottom: _bottomTuyoInverse3,
-              left: _leftTuyo3,
-              child: Image.asset('image/tuyau22ALenvers.png'),
-            ),
-
-            // Autres widgets si nécessaire
+            for (Tuyau tuyau in tuyaux)
+              Positioned(
+                bottom: tuyau.bottom,
+                left: tuyau.left,
+                child: Image.asset('image/Tuyau22.png'),
+              ),
+            for (Tuyau tuyau in tuyauxInverse)
+              Positioned(
+                bottom: tuyau.bottom,
+                left: tuyau.left,
+                child: Image.asset('image/tuyau22ALenvers.png'),
+              ),
           ],
         ),
       ),
