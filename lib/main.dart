@@ -38,8 +38,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   double _bottomFlappy = 5.0;
   double _leftFlappy = 250;
+  double _longueurFlappy = 447;
 
   double _hauteurImageTuyo = 615;
+  double _longueurTuto = 425;
   double _bottomTuyo = -315;
   double _leftTuyo = 1000;
 
@@ -62,8 +64,8 @@ class _MyHomePageState extends State<MyHomePage> {
         }
         if (_bottomFlappy == 0 ||
             _bottomFlappy < _bottomTuyo + _hauteurImageTuyo &&
-                _leftTuyo < condition + 447 &&
-                _leftTuyo > condition + 425) {
+                _leftTuyo < _leftFlappy + _longueurFlappy &&
+                _leftTuyo > _leftFlappy - _longueurTuto) {
           _bottomFlappy = 5;
           _leftTuyo = 1000;
         }
@@ -71,9 +73,9 @@ class _MyHomePageState extends State<MyHomePage> {
           _leftTuyo = 1000;
           double nbr = 0;
           // while (nbr < 250) {
-          nbr = random.nextDouble() * 400;
+          nbr = random.nextDouble() * 100;
           // }
-          _bottomTuyo = nbr;
+          _bottomTuyo = -nbr;
         }
       });
     });
