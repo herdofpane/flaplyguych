@@ -59,12 +59,14 @@ class _MyHomePageState extends State<MyHomePage> {
   double _longueurTuto2 = 425;
   double _bottomTuyo2 = 0;
   double _leftTuyo2 = 0;
+  double _bottomTuyoInverse2 = 0;
 
   //tuyaux 3
   double _hauteurImageTuyo3 = 615;
   double _longueurTuto3 = 425;
   double _bottomTuyo3 = 0;
   double _leftTuyo3 = 0;
+  double _bottomTuyoInverse3 = 0;
 
   int condition = 255;
   late Timer _timer;
@@ -78,19 +80,24 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _leftTuyo = _distanceDepartTuyaux;
     _bottomTuyo = departHauteurTuyaux();
-    _bottomTuyoInverse = _bottomTuyo + _hauteurImageTuyo + 200;
+    // _bottomTuyoInverse = _bottomTuyo + _hauteurImageTuyo + 300;
 
     _leftTuyo2 = _distanceDepartTuyaux2;
     _bottomTuyo2 = departHauteurTuyaux();
+    // _bottomTuyoInverse2 = _bottomTuyo2 + _hauteurImageTuyo + 300;
 
     _leftTuyo3 = _distanceDepartTuyaux3;
     _bottomTuyo3 = departHauteurTuyaux();
+    // _bottomTuyoInverse3 = _bottomTuyo3 + _hauteurImageTuyo + 300;
 
     _poitnDeSpawn = _distanceDepartTuyaux3 - 200;
 
     _timer = Timer.periodic(Duration(milliseconds: _refreshRate), (timer) {
       setState(() {
-        _bottomTuyoInverse = _bottomTuyo + _hauteurImageTuyo + 200;
+        _bottomTuyoInverse = _bottomTuyo + _hauteurImageTuyo + 230;
+        _bottomTuyoInverse2 = _bottomTuyo2 + _hauteurImageTuyo + 230;
+        _bottomTuyoInverse3 = _bottomTuyo3 + _hauteurImageTuyo + 230;
+
         _bottomFlappy += _gravity;
         _leftTuyo += _gravity2;
         _leftTuyo2 += _gravity2;
@@ -121,9 +128,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
 // gestion 2eme tuyaux
         // quand on touche le tuyaux
-        if (_bottomFlappy < _bottomTuyo2 + _hauteurImageTuyo2 &&
-            _leftTuyo2 < _leftFlappy + _longueurFlappy &&
-            _leftTuyo2 > _leftFlappy - _longueurTuto2) {
+        if ((_bottomFlappy < _bottomTuyo + _hauteurImageTuyo &&
+                _leftTuyo < _leftFlappy + _longueurFlappy &&
+                _leftTuyo > _leftFlappy - _longueurTuto) ||
+            (_bottomFlappy + _hauteurFlappy > _bottomTuyoInverse2 &&
+                _leftTuyo < _leftFlappy + _longueurFlappy &&
+                _leftTuyo > _leftFlappy - _longueurTuto)) {
           resetGame();
         }
         // quand le tuyaux touche la fin de la page
@@ -133,9 +143,12 @@ class _MyHomePageState extends State<MyHomePage> {
         }
 // gestion 3eme tuyaux
         // quand on touche le tuyaux
-        if (_bottomFlappy < _bottomTuyo3 + _hauteurImageTuyo3 &&
-            _leftTuyo3 < _leftFlappy + _longueurFlappy &&
-            _leftTuyo3 > _leftFlappy - _longueurTuto3) {
+        if ((_bottomFlappy < _bottomTuyo + _hauteurImageTuyo &&
+                _leftTuyo < _leftFlappy + _longueurFlappy &&
+                _leftTuyo > _leftFlappy - _longueurTuto) ||
+            (_bottomFlappy + _hauteurFlappy > _bottomTuyoInverse3 &&
+                _leftTuyo < _leftFlappy + _longueurFlappy &&
+                _leftTuyo > _leftFlappy - _longueurTuto)) {
           resetGame();
         }
         // quand le tuyaux touche la fin de la page
@@ -220,9 +233,19 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Image.asset('image/tuyo.png'),
             ),
             Positioned(
+              bottom: _bottomTuyoInverse2,
+              left: _leftTuyo2,
+              child: Image.asset('image/tuyoALenvers.png'),
+            ),
+            Positioned(
               bottom: _bottomTuyo3,
               left: _leftTuyo3,
               child: Image.asset('image/tuyo.png'),
+            ),
+            Positioned(
+              bottom: _bottomTuyoInverse3,
+              left: _leftTuyo3,
+              child: Image.asset('image/tuyoALenvers.png'),
             ),
 
             // Autres widgets si nécessaire
