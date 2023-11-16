@@ -58,6 +58,9 @@ class _MyHomePageState extends State<MyHomePage> {
   double _longueurFlappy = 171;
   double _hauteurFlappy = 104;
 
+  double _hauteurImageTuyo = 280;
+  double _longueurTuto = 57;
+
   List<Tuyau> tuyaux = [];
   List<Tuyau> tuyauxInverse = [];
 
@@ -85,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (int i = 0; i < nbrDeTuyaux; i++) {
       tuyauxInverse.add(
         Tuyau(
-          bottom: tuyaux[i].bottom + _hauteurFlappy + 500,
+          bottom: tuyaux[i].bottom + _hauteurImageTuyo + 500,
           left: tuyaux[i].left,
           hauteur: 280,
           longueur: 57,
@@ -155,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
       tuyaux[i].left = _distanceDepartTuyaux * (i + 2);
     }
     for (int i = 0; i < tuyauxInverse.length; i++) {
-      tuyauxInverse[i].bottom = tuyaux[i].bottom + _hauteurFlappy + 500;
+      tuyauxInverse[i].bottom = tuyaux[i].bottom + _hauteurImageTuyo + 300;
       tuyauxInverse[i].left = tuyaux[i].left;
     }
   }
