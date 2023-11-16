@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flappy Guych'),
     );
   }
 }
@@ -35,15 +35,36 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Random random = Random();
+  double _poitnDeSpawn = 0;
 
+  double _distanceDepartTuyaux = 1300;
+  double _distanceDepartTuyaux2 = 2700;
+  double _distanceDepartTuyaux3 = 4000;
+
+  // flappy
   double _bottomFlappy = 5.0;
   double _leftFlappy = 250;
-  double _longueurFlappy = 447;
+  double _longueurFlappy = 171;
+  double _hauteurFlappy = 104;
 
+  // tuyaux 1
   double _hauteurImageTuyo = 615;
   double _longueurTuto = 425;
-  double _bottomTuyo = -315;
-  double _leftTuyo = 1000;
+  double _bottomTuyo = 0;
+  double _leftTuyo = 0;
+  double _bottomTuyoInverse = 0;
+
+  //tuyaux 2
+  double _hauteurImageTuyo2 = 615;
+  double _longueurTuto2 = 425;
+  double _bottomTuyo2 = 0;
+  double _leftTuyo2 = 0;
+
+  //tuyaux 3
+  double _hauteurImageTuyo3 = 615;
+  double _longueurTuto3 = 425;
+  double _bottomTuyo3 = 0;
+  double _leftTuyo3 = 0;
 
   int condition = 255;
   late Timer _timer;
@@ -55,30 +76,72 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    _leftTuyo = _distanceDepartTuyaux;
+    _bottomTuyo = departHauteurTuyaux();
+    _bottomTuyoInverse = _bottomTuyo + _hauteurImageTuyo + 200;
+
+    _leftTuyo2 = _distanceDepartTuyaux2;
+    _bottomTuyo2 = departHauteurTuyaux();
+
+    _leftTuyo3 = _distanceDepartTuyaux3;
+    _bottomTuyo3 = departHauteurTuyaux();
+
+    _poitnDeSpawn = _distanceDepartTuyaux3 - 200;
+
     _timer = Timer.periodic(Duration(milliseconds: _refreshRate), (timer) {
       setState(() {
+        _bottomTuyoInverse = _bottomTuyo + _hauteurImageTuyo + 200;
         _bottomFlappy += _gravity;
         _leftTuyo += _gravity2;
+        _leftTuyo2 += _gravity2;
+        _leftTuyo3 += _gravity2;
+
+        if (_bottomFlappy == 0) {
+          resetGame();
+        }
         if (_bottomFlappy > MediaQuery.of(context).size.height) {
           _bottomFlappy = MediaQuery.of(context).size.height;
         }
-        if (_bottomFlappy == 0 ||
-            _bottomFlappy < _bottomTuyo + _hauteurImageTuyo &&
+// gestion evenement 1er tuyaux
+        // quand on touche le tuyaux
+        if ((_bottomFlappy < _bottomTuyo + _hauteurImageTuyo &&
                 _leftTuyo < _leftFlappy + _longueurFlappy &&
-                _leftTuyo > _leftFlappy - _longueurTuto) {
-          _bottomFlappy = 5;
-          _leftTuyo = 1000;
+                _leftTuyo > _leftFlappy - _longueurTuto) ||
+            (_bottomFlappy + _hauteurFlappy > _bottomTuyoInverse &&
+                _leftTuyo < _leftFlappy + _longueurFlappy &&
+                _leftTuyo > _leftFlappy - _longueurTuto)) {
+          resetGame();
         }
-        if (_leftTuyo == 0) {
-          _leftTuyo = 1000;
-          double nbr = -1000;
-          // print(-nbr);
 
-          while (nbr < -457 || nbr > -200) {
-            nbr = -random.nextDouble() * 1000;
-          }
-          print(nbr);
-          _bottomTuyo = nbr;
+        // quand le tuyaux touche la fin de la page
+        if (_leftTuyo < -_longueurTuto) {
+          _leftTuyo = _poitnDeSpawn;
+          _bottomTuyo = departHauteurTuyaux();
+        }
+
+// gestion 2eme tuyaux
+        // quand on touche le tuyaux
+        if (_bottomFlappy < _bottomTuyo2 + _hauteurImageTuyo2 &&
+            _leftTuyo2 < _leftFlappy + _longueurFlappy &&
+            _leftTuyo2 > _leftFlappy - _longueurTuto2) {
+          resetGame();
+        }
+        // quand le tuyaux touche la fin de la page
+        if (_leftTuyo2 < -_longueurTuto2) {
+          _leftTuyo2 = _poitnDeSpawn;
+          _bottomTuyo2 = departHauteurTuyaux();
+        }
+// gestion 3eme tuyaux
+        // quand on touche le tuyaux
+        if (_bottomFlappy < _bottomTuyo3 + _hauteurImageTuyo3 &&
+            _leftTuyo3 < _leftFlappy + _longueurFlappy &&
+            _leftTuyo3 > _leftFlappy - _longueurTuto3) {
+          resetGame();
+        }
+        // quand le tuyaux touche la fin de la page
+        if (_leftTuyo3 < -_longueurTuto3) {
+          _leftTuyo3 = _poitnDeSpawn;
+          _bottomTuyo3 = departHauteurTuyaux();
         }
       });
     });
@@ -88,6 +151,21 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     _timer.cancel();
     super.dispose();
+  }
+
+  double departHauteurTuyaux() {
+    double nbr = -1000;
+    // while (nbr < -457 || nbr > -200) {
+    nbr = random.nextDouble() * (457 - 200) - 457;
+    // }
+    return nbr;
+  }
+
+  void resetGame() {
+    _bottomFlappy = 5;
+    _leftTuyo = _distanceDepartTuyaux;
+    _leftTuyo2 = _distanceDepartTuyaux2;
+    _leftTuyo3 = _distanceDepartTuyaux3;
   }
 
   void _onKey(RawKeyEvent event) {
@@ -124,11 +202,26 @@ class _MyHomePageState extends State<MyHomePage> {
               bottom: _bottomFlappy,
               left: _leftFlappy,
               child:
-                  Image.asset('image/flappy.png'), // Remplacez par votre image
+                  Image.asset('image/flappy2.png'), // Remplacez par votre image
             ),
             Positioned(
               bottom: _bottomTuyo,
               left: _leftTuyo,
+              child: Image.asset('image/tuyo.png'),
+            ),
+            Positioned(
+              bottom: _bottomTuyoInverse,
+              left: _leftTuyo,
+              child: Image.asset('image/tuyoALenvers.png'),
+            ),
+            Positioned(
+              bottom: _bottomTuyo2,
+              left: _leftTuyo2,
+              child: Image.asset('image/tuyo.png'),
+            ),
+            Positioned(
+              bottom: _bottomTuyo3,
+              left: _leftTuyo3,
               child: Image.asset('image/tuyo.png'),
             ),
 
