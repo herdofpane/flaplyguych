@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double _distanceDepartTuyaux = 700;
   int nbrDeTuyaux = 3;
 
-  double _bottomFlappy = 5.0;
+  double _bottomFlappy = 500.0;
   double _leftFlappy = 250;
   double _longueurFlappy = 171;
   double _hauteurFlappy = 104;
@@ -71,6 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
   final double _gravityTuyau = -10.0;
   final double _jumpStrength = 100.0;
   final int _refreshRate = 20;
+
+  double _birdYSpeed = 0;
+  double _birdYGravity = -0.5;
 
   @override
   void initState() {
@@ -102,7 +105,10 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         // Mise à jour des positions
 
-        _bottomFlappy += _gravityFlappy;
+        _birdYSpeed += _birdYGravity;
+        _bottomFlappy += _birdYSpeed;
+
+        // _bottomFlappy += _gravityFlappy;
         verifTuyauDroit();
         verifTuyauInvers();
 
@@ -191,7 +197,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _jump() {
     setState(() {
+      // while (_bottomFlappy != (_bottomFlappy += _jumpStrength)) {
+      //   _bottomFlappy += 1;
+      // }
       _bottomFlappy += _jumpStrength;
+      _birdYSpeed = 0;
       if (_bottomFlappy == 0) {
         _bottomFlappy = 50;
       }
