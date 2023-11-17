@@ -69,8 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late Timer _timer;
   final double _gravityFlappy = -8.0;
   final double _gravityTuyau = -10.0;
-  final double _jumpStrength = 60.0;
-  final int _refreshRate = 50;
+  final double _jumpStrength = 100.0;
+  final int _refreshRate = 20;
 
   @override
   void initState() {
@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (int i = 0; i < nbrDeTuyaux; i++) {
       tuyauxInverse.add(
         Tuyau(
-          bottom: tuyaux[i].bottom + _hauteurImageTuyo + _hauteurFlappy + 100,
+          bottom: tuyaux[i].bottom + _hauteurImageTuyo + _hauteurFlappy + 200,
           left: tuyaux[i].left,
           hauteur: 280,
           longueur: 57,
@@ -101,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _timer = Timer.periodic(Duration(milliseconds: _refreshRate), (timer) {
       setState(() {
         // Mise à jour des positions
+
         _bottomFlappy += _gravityFlappy;
         verifTuyauDroit();
         verifTuyauInvers();
@@ -176,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     for (int i = 0; i < tuyauxInverse.length; i++) {
       tuyauxInverse[i].bottom =
-          tuyaux[i].bottom + _hauteurImageTuyo + _hauteurFlappy + 100;
+          tuyaux[i].bottom + _hauteurImageTuyo + _hauteurFlappy + 200;
       tuyauxInverse[i].left = tuyaux[i].left;
     }
   }
